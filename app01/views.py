@@ -36,9 +36,7 @@ def getFile(request):
         with open(file_path, mode="wb") as f:
             for chunk in audioFile.chunks():
                 f.write(chunk)
-        print(file_path)
-        ouputFilePath = os.path.join(localPath,"record.pcm")
-        print('ouputFilePath:',ouputFilePath)
+        ouputFilePath = os.path.join(localPath,"/record.pcm")
         # 转换文件格式(wav => pcm
         wav2pcm(file_path,ouputFilePath)
         time1 = datetime.now()
@@ -53,7 +51,9 @@ def getFile(request):
         ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
         time2 = datetime.now()
         print(time2 - time1)
-        return  JsonResponse({'status':False,'info':'返回的文件'})
+        # context = '上一张'
+        context = ws.on_message
+        return  JsonResponse({'status':True,'context':context})
 
 
 class Ws_Param(object):
@@ -183,7 +183,5 @@ def on_open(ws):
 def wav2pcm(input_dir, out_dir) :
     with open(input_dir, 'rb') as wavfile:
         ori_data = wavfile.read() ## 读出来是裸流bytes数据
-        wavfile.close()
     with open(out_dir, 'wb') as pcmfile:
         pcmfile.write(ori_data)
-        pcmfile.close()
